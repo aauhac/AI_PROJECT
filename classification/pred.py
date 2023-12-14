@@ -3,13 +3,27 @@
 
 # In[16]:
 
+
+from main import PororoOcr
+
+def Image_ocr(path):
+    ocr = PororoOcr()
+    img_path = path
+    ocr.run_ocr(img_path, debug=False)
+    l = ocr.get_ocr_result()
+    return l['description']
+
+
+# In[10]:
+
+
 import os
 from tensorflow.keras.models import load_model
 import numpy as np
 from tensorflow.keras.preprocessing import image
 
 # 저장된 모델 불러오기
-loaded_model = load_model("/home/user/pr/prapp/kumoh1.h5")
+loaded_model = load_model("kumoh1.h5")
 
 dir_name = ['d1_1', 'd1_2', 'd1_3', 'db_1', 'db_2', 'db_3', 'etc', 'foun']
 
@@ -28,6 +42,9 @@ def predict(path):
     predicted_label = dir_name[predicted_class]
 
     if predicted_label == "etc":
-        return "B123"
+        l = Image_ocr(image_path)
+        for i in l:
+            if i.find("강의") != -1:
+                return i.split()[0]
     return predicted_label
 
